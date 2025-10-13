@@ -3,7 +3,7 @@ enum RouteName {
   signUp('/sign-up', 'signUp'),
 
   home('/', 'home'),
-  feed('/feed', 'feed'),
+  feed('/news_feed', 'news_feed'),
   asigned('/asigned', 'asigned'),
   profile('/profile', 'profile'),
 

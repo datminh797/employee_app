@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../feature/module_home/presentation/view/screen/home_screen.dart';
+import '../../feature/module_news/presentation/view/screen/news_feed_screen.dart';
 import '../../main_scaffold.dart';
 
 class AppRouter {
@@ -62,7 +63,7 @@ class AppRouter {
           GoRoute(
             path: RouteName.feed.path,
             name: RouteName.feed.name,
-            builder: (context, state) => const Text('feed'),
+            builder: (context, state) => const NewsFeedScreen(),
           ),
           GoRoute(
             path: RouteName.asigned.path,

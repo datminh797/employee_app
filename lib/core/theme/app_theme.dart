@@ -53,7 +53,7 @@ class AppTheme {
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
-      foregroundColor: AppColors.blue600,
+      foregroundColor: Colors.white,
       elevation: 0,
       titleTextStyle: TextStyle(
         fontSize: 24,
