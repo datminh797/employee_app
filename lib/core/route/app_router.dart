@@ -1,7 +1,9 @@
 import 'package:employee_app/core/route/route_name.dart';
+import 'package:employee_app/feature/module_profile/presentation/view/screen/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../feature/module_asigned/presentation/asigned_screen.dart';
 import '../../feature/module_home/presentation/view/screen/home_screen.dart';
 import '../../feature/module_news/presentation/view/screen/news_feed_screen.dart';
 import '../../main_scaffold.dart';
@@ -68,12 +70,12 @@ class AppRouter {
           GoRoute(
             path: RouteName.asigned.path,
             name: RouteName.asigned.name,
-            builder: (context, state) => const Text('asigned'),
+            builder: (context, state) => const AsignedScreen(),
           ),
           GoRoute(
             path: RouteName.profile.path,
             name: RouteName.profile.name,
-            builder: (context, state) => Text('profile'),
+            builder: (context, state) => const ProfileScreen(),
           ),
         ],
       ),

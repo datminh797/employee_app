@@ -9,4 +9,5 @@ class AppTextConstant {
   static const String appBarProfile = 'Thông tin cá nhân';
 
   static const String welcome = 'Xin chào,';
+  static const String logout = 'Đăng xuất';
 }

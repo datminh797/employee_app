@@ -84,10 +84,13 @@ class _MainScaffoldState extends State<MainScaffold> {
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
-        appBar: isHomeTab ? null : appBar(),
-        body: widget.child,
-        bottomNavigationBar: navigationBar(),
-      ),
+          appBar: isHomeTab ? null : appBar(),
+          body: widget.child,
+          bottomNavigationBar: navigationBar(),
+          floatingActionButton: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.add),
+          )),
     );
   }
 
@@ -101,6 +104,8 @@ class _MainScaffoldState extends State<MainScaffold> {
       indicatorColor: color.primary,
       selectedIndex: _currentPageIndex,
       destinations: _tabButton,
+      elevation: 15.0,
+      shadowColor: Colors.grey,
     );
   }
 

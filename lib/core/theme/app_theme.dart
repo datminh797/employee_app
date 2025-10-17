@@ -32,6 +32,11 @@ class AppColors {
   static const Color textPrimary = Color(0xFF0E1E40);
   static const Color textPrimaryLight = Color(0xFF375A9E);
   static const Color textSecondary = Color(0xFF6883C2);
+
+  static const Color absenceDayMarker = Color(0xFFFF6B6B);
+  static const Color highlight = Color(0xFF00C896);
+  static const Color highlight2 = Color(0xFFFFC107);
+  static const Color highlight3 = Color(0xFFFF9EC7);
 }
 
 class AppTheme {

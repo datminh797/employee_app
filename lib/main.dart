@@ -3,6 +3,7 @@ import 'package:toastification/toastification.dart';
 
 import 'core/route/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/utils/size_config.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,6 +23,7 @@ class AppInitializer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return const AppRoot();
   }
 }
