@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/constant/app_image_constant.dart';
-import 'core/constant/app_text_constant.dart';
+import 'generated/l10n.dart';
 
 class MainScaffold extends StatefulWidget {
   final Widget child;
@@ -27,12 +27,16 @@ class _MainScaffoldState extends State<MainScaffold> {
     RouteName.profile.path,
   ];
 
-  final List<Widget> _tabButton = [
-    navButton(icon: AppImageConstant.navHome, label: AppTextConstant.navHome),
-    navButton(icon: AppImageConstant.navNewsFeed, label: AppTextConstant.navNewsFeed),
-    navButton(icon: AppImageConstant.navAsigned, label: AppTextConstant.navAsigned),
-    navButton(icon: AppImageConstant.navProfile, label: AppTextConstant.navProfile),
-  ];
+  List<Widget> _getTabButton() {
+    final localization = S.of(context);
+
+    return [
+      navButton(icon: AppImageConstant.navHome, label: localization.navHome),
+      navButton(icon: AppImageConstant.navNewsFeed, label: localization.navNews),
+      navButton(icon: AppImageConstant.navAsigned, label: localization.navAsigned),
+      navButton(icon: AppImageConstant.navProfile, label: localization.navProfile),
+    ];
+  }
 
   _onTabChange(int index) {
     if (_currentPageIndex == index) {
@@ -52,24 +56,37 @@ class _MainScaffoldState extends State<MainScaffold> {
 
   @override
   void didChangeDependencies() {
-    final currentLocation = GoRouterState.of(context).matchedLocation;
-    final index = _tabPath.indexOf(currentLocation);
-    if (index != -1 && index != _currentPageIndex) {
-      setState(() {
-        _currentPageIndex = index;
-      });
-    }
+    // final currentLocation = GoRouterState.of(context).matchedLocation;
+    // final index = _tabPath.indexOf(currentLocation);
+    // if (index != -1 && index != _currentPageIndex) {
+    //   setState(() {
+    //     _currentPageIndex = index;
+    //   });
+    // }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currentLocation = GoRouterState.of(context).matchedLocation;
+      final index = _tabPath.indexOf(currentLocation);
+      if (index != -1 && index != _currentPageIndex) {
+        if (mounted) {
+          setState(() {
+            _currentPageIndex = index;
+          });
+        }
+      }
+    });
     super.didChangeDependencies();
   }
 
   String getTitleTab(String currentLocation) {
+    final localization = S.of(context);
+
     switch (_currentPageIndex) {
       case 1:
-        return AppTextConstant.appBarNewsFeed;
+        return localization.newsTitlte;
       case 2:
-        return AppTextConstant.appBarAsigned;
+        return localization.asignedTitle;
       case 3:
-        return AppTextConstant.appBarProfile;
+        return localization.profileTitle;
       default:
         return '';
     }
@@ -84,13 +101,10 @@ class _MainScaffoldState extends State<MainScaffold> {
         statusBarColor: Colors.transparent,
       ),
       child: Scaffold(
-          appBar: isHomeTab ? null : appBar(),
-          body: widget.child,
-          bottomNavigationBar: navigationBar(),
-          floatingActionButton: IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.add),
-          )),
+        appBar: isHomeTab ? null : appBar(),
+        body: widget.child,
+        bottomNavigationBar: navigationBar(),
+      ),
     );
   }
 
@@ -103,20 +117,21 @@ class _MainScaffoldState extends State<MainScaffold> {
       onDestinationSelected: _onTabChange,
       indicatorColor: color.primary,
       selectedIndex: _currentPageIndex,
-      destinations: _tabButton,
+      destinations: _getTabButton(),
       elevation: 15.0,
       shadowColor: Colors.grey,
     );
   }
 
   PreferredSizeWidget homeAppBar() {
+    final localization = S.of(context);
     final color = Theme.of(context).colorScheme;
     return AppBar(
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppTextConstant.welcome,
+            localization.welcome,
             style: AppTextTheme.body2Regular.copyWith(color: color.primary),
           ),
           Text(

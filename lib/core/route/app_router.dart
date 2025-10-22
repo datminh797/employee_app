@@ -60,22 +60,38 @@ class AppRouter {
           GoRoute(
             path: RouteName.home.path,
             name: RouteName.home.name,
-            builder: (context, state) => const HomeScreen(),
+            // builder: (context, state) => const HomeScreen(),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const HomeScreen(),
+            ),
           ),
           GoRoute(
             path: RouteName.feed.path,
             name: RouteName.feed.name,
-            builder: (context, state) => const NewsFeedScreen(),
+            // builder: (context, state) => const NewsFeedScreen(),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const NewsFeedScreen(),
+            ),
           ),
           GoRoute(
             path: RouteName.asigned.path,
             name: RouteName.asigned.name,
-            builder: (context, state) => const AsignedScreen(),
+            // builder: (context, state) => const AsignedScreen(),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const AsignedScreen(),
+            ),
           ),
           GoRoute(
             path: RouteName.profile.path,
             name: RouteName.profile.name,
-            builder: (context, state) => const ProfileScreen(),
+            // builder: (context, state) => const ProfileScreen(),
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const ProfileScreen(),
+            ),
           ),
         ],
       ),
