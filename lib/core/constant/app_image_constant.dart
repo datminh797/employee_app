@@ -1,4 +1,5 @@
 class AppImageConstant {
+  // ---------------------------- ICONS ----------------------------
   static const String navHome = 'assets/icon/nav_home.svg';
   static const String navNewsFeed = 'assets/icon/nav_feed.svg';
   static const String navAsigned = 'assets/icon/nav_task.svg';
@@ -20,4 +21,11 @@ class AppImageConstant {
   static const String homeCompanyNews = 'assets/icon/home_company_news.svg';
   static const String homeCompanyOrganize = 'assets/icon/home_company_organize.svg';
   static const String homeCompanySurvey = 'assets/icon/home_company_survey.svg';
+  static const String homeHelpRequest = 'assets/icon/home_help_request.svg';
+  static const String homeHelpDevice = 'assets/icon/home_help_device.svg';
+  static const String homeHelpIT = 'assets/icon/home_help_IT.svg';
+  static const String homeRecCheckList = 'assets/icon/home_rec_check_list.svg';
+  static const String homeRecInterview = 'assets/icon/home_rec_interview.svg';
+  static const String homeRecRecall = 'assets/icon/home_rec_recall.svg';
+  static const String homeRecReferral = 'assets/icon/home_rec_referral.svg';
 }

@@ -13,7 +13,6 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   LocationBloc({required this.getUserLocationUseCase}) : super(LocationInitial()) {
     on<GetLocation>(_getLocation);
   }
-
   Future<void> _getLocation(GetLocation event, Emitter<LocationState> emit) async {
     emit(LocationLoading());
     try {
@@ -27,7 +26,6 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
             UserLocation(
               latitude: 0,
               longitude: 0,
-              provinceName: 'Toàn Quốc',
             ),
           ),
         );

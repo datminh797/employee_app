@@ -99,7 +99,6 @@ class UserLocationModel {
     return UserLocation(
       latitude: latitude,
       longitude: longitude,
-      provinceName: provinceName,
     );
   }
 }
