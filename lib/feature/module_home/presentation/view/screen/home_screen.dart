@@ -1,915 +1,10 @@
-// import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:employee_app/core/extension/size_extension.dart';
-// import 'package:employee_app/core/theme/app_theme.dart';
-// import 'package:employee_app/widgets/box_shadow/common_box_shadow.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_svg/svg.dart';
-// import 'package:go_router/go_router.dart';
-// import 'package:intl/intl.dart';
-// import 'package:sleek_circular_slider/sleek_circular_slider.dart';
-// import 'package:table_calendar/table_calendar.dart';
-//
-// import '../../../../../core/constant/app_image_constant.dart';
-// import '../../../../../core/theme/text_theme.dart';
-// import '../../../../../generated/l10n.dart';
-// import '../../../../module_asigned/presentation/asigned_screen.dart';
-//
-// class HomeScreen extends StatefulWidget {
-//   const HomeScreen({super.key});
-//
-//   @override
-//   State<HomeScreen> createState() => _HomeScreenState();
-// }
-//
-// class _HomeScreenState extends State<HomeScreen> {
-//   final ScrollController _scrollController = ScrollController();
-//
-//   CalendarFormat _calendarFormat = CalendarFormat.week;
-//   DateTime _focusedDay = DateTime.now();
-//   DateTime? _selectedDay;
-//
-//   final Map<DateTime, List<String>> _absences = {
-//     DateTime(2025, 10, 15): ['John Doe', 'Jane Smith'],
-//     DateTime(2025, 10, 1): ['Alice Johnson'],
-//     DateTime(2025, 10, 20): ['Bob Williams', 'Carol Martinez'],
-//   };
-//
-//   final List<DateTime> _absenceDay = [
-//     DateTime(2025, 10, 10),
-//     DateTime(2025, 10, 15),
-//     DateTime(2025, 10, 17),
-//   ];
-//
-//   final List<Color> _absenceProgressBarColors = [
-//     AppColors.blue100,
-//     AppColors.blue200,
-//     AppColors.blue300,
-//     AppColors.blue400,
-//     AppColors.blue500,
-//     AppColors.blue600,
-//     AppColors.blue700,
-//     AppColors.blue800,
-//   ];
-//   List<String> _getAbsencesForDay(DateTime day) {
-//     return _absences[DateTime(day.year, day.month, day.day)] ?? [];
-//   }
-//
-//   // final List<Map<String, dynamic>> companyItems = [
-//   //   {
-//   //     'icon': Icons.home,
-//   //     'label': 'Bảng tin công ty',
-//   //     'path': '/news',
-//   //   },
-//   //   {
-//   //     'icon': Icons.search,
-//   //     'label': 'Sơ đồ tổ chức',
-//   //     'path': '/organize',
-//   //   },
-//   //   {
-//   //     'icon': Icons.settings,
-//   //     'label': 'Khảo sát',
-//   //     'path': '/survey',
-//   //   },
-//   //   {
-//   //     'icon': Icons.person,
-//   //     'label': 'Khen thưởng',
-//   //     'path': '/award',
-//   //   },
-//   //   {
-//   //     'icon': Icons.notifications,
-//   //     'label': 'Sự kiện nội bộ',
-//   //     'path': '/events',
-//   //   },
-//   // ];
-//
-//   List<Map<String, dynamic>> _getCompanyItems() {
-//     final localization = S.of(context);
-//
-//     return [
-//       {
-//         'icon': AppImageConstant.homeCompanyNews,
-//         'label': localization.companyNews,
-//         'path': '/news',
-//       },
-//       {
-//         'icon': AppImageConstant.homeCompanyOrganize,
-//         'label': localization.organization,
-//         'path': '/organize',
-//       },
-//       {
-//         'icon': AppImageConstant.homeCompanySurvey,
-//         'label': localization.survey,
-//         'path': '/survey',
-//       },
-//       {
-//         'icon': AppImageConstant.homeCompanyAward,
-//         'label': localization.award,
-//         'path': '/award',
-//       },
-//       {
-//         'icon': AppImageConstant.homeCompanyEvent,
-//         'label': localization.event,
-//         'path': '/event',
-//       },
-//     ];
-//   }
-//
-//   List<Map<String, dynamic>> _getHelpDeskItems() {
-//     final localization = S.of(context);
-//
-//     return [
-//       {
-//         'icon': AppImageConstant.homeHelpIT,
-//         'label': localization.ticketIT,
-//         'path': '/ticket_it',
-//       },
-//       {
-//         'icon': AppImageConstant.homeHelpRequest,
-//         'label': localization.createRequest,
-//         'path': '/create_request',
-//       },
-//       {
-//         'icon': AppImageConstant.homeHelpDevice,
-//         'label': localization.requestDevice,
-//         'path': '/request_device',
-//       },
-//     ];
-//   }
-//
-//   List<Map<String, dynamic>> _getRecruimentItems() {
-//     final localization = S.of(context);
-//
-//     return [
-//       {
-//         'icon': AppImageConstant.homeRecReferral,
-//         'label': localization.referral,
-//         'path': '/referral',
-//       },
-//       {
-//         'icon': AppImageConstant.homeRecInterview,
-//         'label': localization.interviewCalendar,
-//         'path': '/interview_calendar',
-//       },
-//       {
-//         'icon': AppImageConstant.homeRecCheckList,
-//         'label': localization.onboardChecklist,
-//         'path': '/onboard_checklist',
-//       },
-//       {
-//         'icon': AppImageConstant.homeRecRecall,
-//         'label': localization.offboarding,
-//         'path': '/offboarding',
-//       },
-//     ];
-//   }
-//
-//   bool _hasScrolled = false;
-//
-//   @override
-//   void initState() {
-//     _scrollController.addListener(_onScroll);
-//     super.initState();
-//   }
-//
-//   @override
-//   void dispose() {
-//     _scrollController.removeListener(_onScroll);
-//     _scrollController.dispose();
-//     super.dispose();
-//   }
-//
-//   void _onScroll() {
-//     final newHasScrolled = _scrollController.offset > 5.0;
-//
-//     if (_hasScrolled != newHasScrolled) {
-//       setState(() {
-//         _hasScrolled = newHasScrolled;
-//       });
-//     }
-//   }
-//
-//   _onChangeCalendarFormat() {
-//     setState(() {
-//       if (_calendarFormat == CalendarFormat.week) {
-//         _calendarFormat = CalendarFormat.month;
-//       } else {
-//         _calendarFormat = CalendarFormat.week;
-//       }
-//     });
-//   }
-//
-//   _addingActionList() {
-//     final localization = S.of(context);
-//     showModalBottomSheet(
-//       context: context,
-//       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-//       builder: (context) {
-//         return Column(
-//           mainAxisSize: MainAxisSize.min,
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Padding(
-//               padding: const EdgeInsets.all(20.0),
-//               child: Text(
-//                 localization.listRequest,
-//                 style: AppTextTheme.title1Bold,
-//               ),
-//             ),
-//             ListTile(
-//               title: Text(
-//                 localization.scanQR,
-//                 style: AppTextTheme.body1Regular,
-//               ),
-//               trailing: Icon(
-//                 Icons.qr_code,
-//                 color: AppColors.textPrimaryLight,
-//               ),
-//               onTap: () {
-//                 //
-//               },
-//             ),
-//             ListTile(
-//               title: Text(
-//                 localization.checkin,
-//                 style: AppTextTheme.body1Regular,
-//               ),
-//               trailing: SvgPicture.asset(
-//                 AppImageConstant.checkin,
-//                 width: 25,
-//                 colorFilter: ColorFilter.mode(AppColors.textPrimaryLight, BlendMode.srcIn),
-//               ),
-//               onTap: () {
-//                 //
-//               },
-//             ),
-//             ListTile(
-//               title: Text(
-//                 localization.leaveRequest,
-//                 style: AppTextTheme.body1Regular,
-//               ),
-//               trailing: SvgPicture.asset(
-//                 AppImageConstant.calendar,
-//                 width: 25,
-//                 colorFilter: ColorFilter.mode(AppColors.textPrimaryLight, BlendMode.srcIn),
-//               ),
-//               onTap: () {
-//                 //
-//               },
-//             ),
-//             ListTile(
-//               title: Text(
-//                 localization.createTicket,
-//                 style: AppTextTheme.body1Regular,
-//               ),
-//               trailing: SvgPicture.asset(
-//                 AppImageConstant.request,
-//                 width: 25,
-//                 colorFilter: ColorFilter.mode(AppColors.textPrimaryLight, BlendMode.srcIn),
-//               ),
-//               onTap: () {
-//                 //
-//               },
-//             ),
-//             SizedBox(height: 15.0.h()),
-//           ],
-//         );
-//       },
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final color = Theme.of(context).colorScheme;
-//     final localization = S.of(context);
-//
-//     return Stack(
-//       children: [
-//         CustomScrollView(
-//           shrinkWrap: true,
-//           controller: _scrollController,
-//           slivers: [
-//             SliverPersistentHeader(
-//               pinned: true,
-//               delegate: PinnedHeaderDelegate(
-//                 maxHeight: 150,
-//                 minHeight: 150,
-//                 child: _topBar(),
-//               ),
-//             ),
-//             SliverToBoxAdapter(child: SizedBox(height: 20.0)),
-//             SliverToBoxAdapter(child: _calendarView()),
-//             SliverToBoxAdapter(child: SizedBox(height: 15.0)),
-//             SliverToBoxAdapter(
-//               child: Row(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   _absenceView(),
-//                   _attendanceView(),
-//                 ],
-//               ),
-//             ),
-//             SliverToBoxAdapter(child: SizedBox(height: 15.0)),
-//             SliverToBoxAdapter(child: _incompleteTaskView()),
-//             SliverToBoxAdapter(child: SizedBox(height: 15.0)),
-//             _functionListTitle(localization.aboutCompany),
-//             SliverPadding(
-//               padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-//               sliver: DecoratedSliver(
-//                 decoration: BoxDecoration(
-//                   color: Colors.white,
-//                   borderRadius: BorderRadius.circular(20),
-//                   boxShadow: commonBoxShadow,
-//                 ),
-//                 sliver: SliverGrid(
-//                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                     crossAxisCount: 4,
-//                     mainAxisSpacing: 0,
-//                     childAspectRatio: 1,
-//                   ),
-//                   delegate: SliverChildBuilderDelegate(
-//                     (context, index) {
-//                       return _gridItem(
-//                         icon: _getCompanyItems()[index]['icon'],
-//                         label: _getCompanyItems()[index]['label'],
-//                         path: _getCompanyItems()[index]['path'],
-//                       );
-//                     },
-//                     childCount: _getCompanyItems().length,
-//                   ),
-//                 ),
-//               ),
-//             ),
-//             _functionListTitle('Helpdesk'),
-//             SliverPadding(
-//               padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-//               sliver: DecoratedSliver(
-//                 decoration: BoxDecoration(
-//                   color: Colors.white,
-//                   borderRadius: BorderRadius.circular(20),
-//                   boxShadow: commonBoxShadow,
-//                 ),
-//                 sliver: SliverGrid(
-//                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                     crossAxisCount: 4,
-//                     mainAxisSpacing: 0,
-//                     childAspectRatio: 1,
-//                   ),
-//                   delegate: SliverChildBuilderDelegate(
-//                     (context, index) {
-//                       return _gridItem(
-//                         icon: _getHelpDeskItems()[index]['icon'],
-//                         label: _getHelpDeskItems()[index]['label'],
-//                         path: _getHelpDeskItems()[index]['path'],
-//                       );
-//                     },
-//                     childCount: _getHelpDeskItems().length,
-//                   ),
-//                 ),
-//               ),
-//             ),
-//             _functionListTitle('Nhân sự'),
-//             SliverPadding(
-//               padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-//               sliver: DecoratedSliver(
-//                 decoration: BoxDecoration(
-//                   color: Colors.white,
-//                   borderRadius: BorderRadius.circular(20),
-//                   boxShadow: commonBoxShadow,
-//                 ),
-//                 sliver: SliverGrid(
-//                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                     crossAxisCount: 4,
-//                     mainAxisSpacing: 0,
-//                     childAspectRatio: 1,
-//                   ),
-//                   delegate: SliverChildBuilderDelegate(
-//                     (context, index) {
-//                       return _gridItem(
-//                         icon: _getRecruimentItems()[index]['icon'],
-//                         label: _getRecruimentItems()[index]['label'],
-//                         path: _getRecruimentItems()[index]['path'],
-//                       );
-//                     },
-//                     childCount: _getRecruimentItems().length,
-//                   ),
-//                 ),
-//               ),
-//             ),
-//             SliverToBoxAdapter(child: SizedBox(height: 25.0)),
-//           ],
-//         ),
-//         _quickActionButton(),
-//       ],
-//     );
-//   }
-//
-//   SliverToBoxAdapter _functionListTitle(String title) {
-//     return SliverToBoxAdapter(
-//       child: Padding(
-//         padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 3.0, top: 10),
-//         child: Text(
-//           title,
-//           style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _gridItem({required String icon, required String label, required String path}) {
-//     return Container(
-//       padding: const EdgeInsets.all(5.0),
-//       child: Material(
-//         color: Colors.transparent,
-//         borderRadius: BorderRadius.circular(15),
-//         clipBehavior: Clip.antiAliasWithSaveLayer,
-//         child: InkWell(
-//           onTap: () {
-//             // context.goNamed();
-//           },
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               SvgPicture.asset(
-//                 icon,
-//                 width: 32.0.w(),
-//               ),
-//               SizedBox(height: 7.0.h()),
-//               Text(
-//                 label,
-//                 style: AppTextTheme.caption2Bold,
-//                 maxLines: 1,
-//                 overflow: TextOverflow.ellipsis,
-//                 textAlign: TextAlign.center,
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _quickActionButton() {
-//     final color = Theme.of(context).colorScheme;
-//
-//     return Positioned(
-//       bottom: 10,
-//       right: 10,
-//       child: IconButton(
-//         splashRadius: 30,
-//         style: ButtonStyle(
-//           backgroundColor: WidgetStatePropertyAll(color.primaryContainer),
-//           shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(8.0.r()),
-//           )),
-//           elevation: WidgetStatePropertyAll<double>(3),
-//           shadowColor: WidgetStatePropertyAll<Color>(Colors.grey),
-//         ),
-//         onPressed: _addingActionList,
-//         icon: Icon(
-//           Icons.add,
-//           color: color.primary,
-//           size: 28.0.h(),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _incompleteTaskView() {
-//     final localization = S.of(context);
-//
-//     return Container(
-//       margin: EdgeInsets.symmetric(horizontal: 12),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(20),
-//         boxShadow: commonBoxShadow,
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Padding(
-//             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-//             child: Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 Text(
-//                   localization.incompleteTask,
-//                   style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-//                 ),
-//                 SvgPicture.asset(
-//                   AppImageConstant.pin,
-//                   width: 25,
-//                 ),
-//               ],
-//             ),
-//           ),
-//           ListView.separated(
-//             padding: EdgeInsets.symmetric(horizontal: 20),
-//             shrinkWrap: true,
-//             physics: NeverScrollableScrollPhysics(),
-//             itemBuilder: (context, index) {
-//               return Padding(
-//                 padding: EdgeInsets.symmetric(vertical: 8),
-//                 child: Text('Task $index', style: AppTextTheme.label2Regular),
-//               );
-//             },
-//             separatorBuilder: (context, index) => SizedBox(height: 10),
-//             itemCount: 3,
-//           ),
-//           SizedBox(height: 10)
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _attendanceView() {
-//     final localization = S.of(context);
-//
-//     return Expanded(
-//       child: Container(
-//         padding: EdgeInsets.all(12),
-//         margin: EdgeInsets.only(right: 12, left: 6),
-//         height: 230.0.h(),
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(20),
-//           boxShadow: commonBoxShadow,
-//         ),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text(
-//               localization.attendanceData,
-//               style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-//             ),
-//             SizedBox(height: 10),
-//             RichText(
-//               text: TextSpan(
-//                 text: localization.attendanceDate,
-//                 style: AppTextTheme.caption2Regular,
-//                 children: [
-//                   TextSpan(
-//                     text: '\n 15/10/2025',
-//                     style: AppTextTheme.body2Bold,
-//                   ),
-//                 ],
-//               ),
-//               textAlign: TextAlign.start,
-//             ),
-//             SizedBox(height: 5),
-//             RichText(
-//               text: TextSpan(
-//                 text: localization.checkInTime,
-//                 style: AppTextTheme.caption2Regular,
-//                 children: [
-//                   TextSpan(
-//                     text: '\n 08:59:05',
-//                     style: AppTextTheme.body2Bold,
-//                   ),
-//                 ],
-//               ),
-//               textAlign: TextAlign.start,
-//             ),
-//             SizedBox(height: 5),
-//             RichText(
-//               text: TextSpan(
-//                 text: localization.checkOutTime,
-//                 style: AppTextTheme.caption2Regular,
-//                 children: [
-//                   TextSpan(
-//                     text: '\n 18:00:01',
-//                     style: AppTextTheme.body2Bold,
-//                   ),
-//                 ],
-//               ),
-//               textAlign: TextAlign.start,
-//             ),
-//             SizedBox(height: 5),
-//             RichText(
-//               text: TextSpan(
-//                 text: localization.checkInLocation,
-//                 style: AppTextTheme.caption2Regular,
-//                 children: [
-//                   TextSpan(
-//                     text: '\n PK. Lê Thanh Nghị - 266 Lê Thanh Nghị',
-//                     style: AppTextTheme.label1Bold,
-//                   ),
-//                 ],
-//               ),
-//               textAlign: TextAlign.start,
-//               maxLines: 3,
-//               overflow: TextOverflow.ellipsis,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _absenceView() {
-//     final localization = S.of(context);
-//
-//     return Expanded(
-//       child: Container(
-//         padding: EdgeInsets.all(12),
-//         margin: EdgeInsets.only(left: 12, right: 6),
-//         height: 230.0.h(),
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(20),
-//           boxShadow: commonBoxShadow,
-//         ),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.center,
-//           children: [
-//             SizedBox(
-//               width: double.infinity,
-//               child: Text(
-//                 localization.leaveDay,
-//                 style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-//               ),
-//             ),
-//             SizedBox(height: 20.0.h()),
-//             SleekCircularSlider(
-//               appearance: CircularSliderAppearance(
-//                 customWidths: CustomSliderWidths(progressBarWidth: 10),
-//                 customColors: CustomSliderColors(
-//                   progressBarColors: _absenceProgressBarColors,
-//                   trackColor: Colors.grey.shade400,
-//                 ),
-//               ),
-//               onChange: null,
-//               innerWidget: (double dayoff) {
-//                 return Center(
-//                   child: Column(
-//                     mainAxisAlignment: MainAxisAlignment.end,
-//                     children: [
-//                       RichText(
-//                         text: TextSpan(
-//                           text: '1.0',
-//                           style: AppTextTheme.display1Bold.copyWith(
-//                             color: AppColors.textSecondary,
-//                             fontSize: 30,
-//                             fontWeight: FontWeight.w800,
-//                             letterSpacing: 0.1,
-//                           ),
-//                           children: [
-//                             TextSpan(
-//                               text: '/ \n12 ${localization.day}',
-//                               style: AppTextTheme.caption1Bold.copyWith(color: AppColors.textSecondary),
-//                             ),
-//                           ],
-//                         ),
-//                         textAlign: TextAlign.center,
-//                       ),
-//                       SizedBox(height: 35.0.h()),
-//                       RichText(
-//                         text: TextSpan(
-//                           text: localization.remain,
-//                           style: AppTextTheme.label2Regular.copyWith(color: AppColors.textSecondary),
-//                           children: [
-//                             TextSpan(
-//                               text: '11.0',
-//                               style: AppTextTheme.body2Bold.copyWith(color: AppColors.absenceDayMarker),
-//                             ),
-//                             TextSpan(
-//                               text: ' ${localization.day}',
-//                               style: AppTextTheme.label2Regular.copyWith(color: AppColors.textSecondary),
-//                             ),
-//                           ],
-//                         ),
-//                         textAlign: TextAlign.center,
-//                       ),
-//                     ],
-//                   ),
-//                 );
-//               },
-//               min: 1,
-//               max: 12,
-//               initialValue: 11,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _calendarView() {
-//     final color = Theme.of(context).colorScheme;
-//     final localization = S.of(context);
-//
-//     return Container(
-//       width: double.infinity,
-//       padding: EdgeInsets.only(left: 12, right: 12, top: 5, bottom: 10),
-//       margin: EdgeInsets.symmetric(horizontal: 12),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(20),
-//         boxShadow: commonBoxShadow,
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               Text(
-//                 localization.workDay,
-//                 style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-//               ),
-//               IconButton(
-//                 onPressed: _onChangeCalendarFormat,
-//                 icon: Icon(
-//                   _calendarFormat == CalendarFormat.week
-//                       ? Icons.arrow_drop_down_circle_rounded
-//                       : Icons.arrow_drop_up_rounded,
-//                   color: color.primary,
-//                   size: 30,
-//                 ),
-//               )
-//             ],
-//           ),
-//           TableCalendar(
-//             startingDayOfWeek: StartingDayOfWeek.monday,
-//             firstDay: DateTime.utc(2010, 10, 16),
-//             lastDay: DateTime.utc(2030, 3, 14),
-//             focusedDay: DateTime.now(),
-//             headerVisible: true,
-//             headerStyle: HeaderStyle(
-//               formatButtonVisible: false,
-//               formatButtonShowsNext: false,
-//               titleCentered: true,
-//               titleTextFormatter: (date, locale) {
-//                 return DateFormat('MM/yyyy').format(date);
-//               },
-//               titleTextStyle: AppTextTheme.body1Bold.copyWith(color: AppColors.textPrimaryLight),
-//               headerPadding: EdgeInsets.only(top: 5),
-//               leftChevronMargin: EdgeInsets.zero,
-//               rightChevronMargin: EdgeInsets.zero,
-//             ),
-//             calendarFormat: _calendarFormat,
-//             selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-//             onDaySelected: (selectedDay, focusedDay) {
-//               setState(() {
-//                 _selectedDay = selectedDay;
-//                 _focusedDay = focusedDay;
-//               });
-//             },
-//             onFormatChanged: (format) {
-//               setState(() {
-//                 _calendarFormat = format;
-//               });
-//             },
-//             calendarStyle: CalendarStyle(),
-//             calendarBuilders: CalendarBuilders(
-//               defaultBuilder: (context, day, focusedDay) {
-//                 // ------------------ FUTURE DAYS ------------------
-//                 if (day.weekday == DateTime.saturday || day.weekday == DateTime.sunday || day.isAfter(DateTime.now())) {
-//                   return calendarMarker(
-//                     Colors.white,
-//                     Colors.grey.withValues(alpha: 0.5),
-//                     day,
-//                     // textColor: Colors.black.withValues(alpha: 0.6),
-//                     textColor: AppColors.textSecondary,
-//                   );
-//                 }
-//
-//                 // ------------------ ABSENCE DAYS ------------------
-//                 final absences = _getAbsencesForDay(day);
-//                 if (absences.isNotEmpty) {
-//                   return calendarMarker(AppColors.absenceDayMarker, null, day);
-//                 }
-//
-//                 // ------------------ ABSENCE DAYS ------------------
-//                 return calendarMarker(color.primary, null, day);
-//               },
-//               // ------------------ SELECTED DAYS ------------------
-//               selectedBuilder: (context, day, focusedDay) {
-//                 final absences = _getAbsencesForDay(day);
-//                 Color bgColor;
-//                 if (day.weekday == DateTime.saturday || day.weekday == DateTime.sunday) {
-//                   bgColor = Colors.grey.shade300;
-//                 } else if (absences.isNotEmpty) {
-//                   bgColor = Colors.red;
-//                 } else {
-//                   bgColor = color.primary;
-//                 }
-//                 return calendarMarker(bgColor, null, day);
-//               },
-//               // ------------------ CURRENT DAYS ------------------
-//               todayBuilder: (context, day, focusedDay) {
-//                 final absences = _getAbsencesForDay(day);
-//                 Color bgColor;
-//                 if (day.weekday == DateTime.saturday || day.weekday == DateTime.sunday) {
-//                   bgColor = Colors.grey.shade300;
-//                 } else if (absences.isNotEmpty) {
-//                   bgColor = Colors.red.withValues(alpha: 0.7);
-//                 } else {
-//                   bgColor = color.primary.withValues(alpha: 0.7);
-//                 }
-//                 return calendarMarker(bgColor, bgColor, day);
-//               },
-//             ),
-//             // eventLoader: _getAbsencesForDay,
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget calendarMarker(
-//     Color bgColor,
-//     Color? borderColor,
-//     DateTime day, {
-//     Color textColor = Colors.white,
-//   }) {
-//     return Center(
-//       child: Container(
-//         decoration: BoxDecoration(
-//           color: bgColor,
-//           shape: BoxShape.circle,
-//           border: borderColor != null ? Border.all(color: borderColor, width: 1) : null,
-//         ),
-//         width: 30.0,
-//         height: 30,
-//         child: Center(
-//           child: Text(
-//             '${day.day}',
-//             style: TextStyle(
-//               color: textColor,
-//               fontWeight: FontWeight.bold,
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _topBar() {
-//     final color = Theme.of(context).colorScheme;
-//     final topPadding = MediaQuery.of(context).padding.top + 85;
-//     final localization = S.of(context);
-//
-//     return Material(
-//       elevation: 5.0,
-//       borderRadius: BorderRadius.horizontal(
-//         left: Radius.circular(38),
-//         right: Radius.circular(38),
-//       ),
-//       clipBehavior: Clip.antiAliasWithSaveLayer,
-//       child: Container(
-//         height: topPadding,
-//         decoration: BoxDecoration(color: color.primaryContainer),
-//         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-//         child: Row(
-//           crossAxisAlignment: CrossAxisAlignment.end,
-//           children: [
-//             Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               mainAxisAlignment: MainAxisAlignment.end,
-//               children: [
-//                 Text(
-//                   localization.welcome,
-//                   style: AppTextTheme.body2Regular.copyWith(color: color.primary),
-//                 ),
-//                 Text(
-//                   '\t Nguyen Van Anh',
-//                   style: AppTextTheme.body2Bold.copyWith(color: color.primary),
-//                 ),
-//               ],
-//             ),
-//             Spacer(),
-//             IconButton(
-//                 onPressed: () {},
-//                 icon: SvgPicture.asset(
-//                   AppImageConstant.notification,
-//                   width: 30,
-//                   fit: BoxFit.cover,
-//                   colorFilter: ColorFilter.mode(color.primary, BlendMode.srcIn),
-//                 )),
-//             SizedBox(width: 5),
-//             CircleAvatar(
-//               radius: 20,
-//               backgroundImage: CachedNetworkImageProvider(
-//                 'https://as2.ftcdn.net/v2/jpg/03/31/69/91/1000_F_331699188_lRpvqxO5QRtwOM05gR50ImaaJgBx68vi.jpg',
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:employee_app/core/extension/size_extension.dart';
 import 'package:employee_app/core/theme/app_theme.dart';
 import 'package:employee_app/widgets/box_shadow/common_box_shadow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../../../core/constant/app_image_constant.dart';
@@ -937,32 +32,10 @@ class _HomeScreenState extends State<HomeScreen> {
     DateTime(2025, 10, 20): ['Bob Williams', 'Carol Martinez'],
   };
 
-  final List<DateTime> _absenceDay = [
-    DateTime(2025, 10, 10),
-    DateTime(2025, 10, 15),
-    DateTime(2025, 10, 17),
-  ];
-
-  final List<Color> _absenceProgressBarColors = [
-    AppColors.blue100,
-    AppColors.blue200,
-    AppColors.blue300,
-    AppColors.blue400,
-    AppColors.blue500,
-    AppColors.blue600,
-    AppColors.blue700,
-    AppColors.blue800,
-  ];
-
-  // Cache the items lists to avoid rebuilding on every build
   late List<Map<String, dynamic>> _companyItems;
   late List<Map<String, dynamic>> _helpDeskItems;
   late List<Map<String, dynamic>> _recruimentItems;
   bool _itemsInitialized = false;
-
-  List<String> _getAbsencesForDay(DateTime day) {
-    return _absences[DateTime(day.year, day.month, day.day)] ?? [];
-  }
 
   bool _hasScrolled = false;
 
@@ -975,7 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Initialize items only once when localization is available
     if (!_itemsInitialized) {
       _initializeItems();
       _itemsInitialized = true;
@@ -1134,13 +206,13 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         CustomScrollView(
           controller: _scrollController,
-          cacheExtent: 500, // Precache widgets for smoother scrolling
+          cacheExtent: 600,
           slivers: [
             SliverPersistentHeader(
               pinned: true,
               delegate: PinnedHeaderDelegate(
-                maxHeight: 125.0.h(),
-                minHeight: 125.0.h(),
+                maxHeight: 150,
+                minHeight: 150,
                 child: _topBar(),
               ),
             ),
@@ -1161,10 +233,11 @@ class _HomeScreenState extends State<HomeScreen> {
             const SliverToBoxAdapter(child: SizedBox(height: 15.0)),
             _functionListTitle(localization.aboutCompany),
             _buildFunctionGrid(_companyItems),
-            _functionListTitle('Helpdesk'),
-            _buildFunctionGrid(_helpDeskItems),
-            _functionListTitle('Nhân sự'),
-            _buildFunctionGrid(_recruimentItems),
+            // _functionListTitle('Helpdesk'),
+            // _buildFunctionGrid(_helpDeskItems),
+            // _functionListTitle('Nhân sự'),
+            // _buildFunctionGrid(_recruimentItems),
+            // SliverToBoxAdapter(child: _incomingEventView()),
             const SliverToBoxAdapter(child: SizedBox(height: 25.0)),
           ],
         ),
@@ -1173,7 +246,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Extract function grid building into reusable widget
   Widget _buildFunctionGrid(List<Map<String, dynamic>> items) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
@@ -1244,62 +316,54 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _incompleteTaskView() {
+  Widget _incomingEventView() {
     final localization = S.of(context);
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: commonBoxShadow,
-      ),
+    return RepaintBoundary(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  localization.incompleteTask,
-                  style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-                ),
-                SvgPicture.asset(
-                  AppImageConstant.pin,
-                  width: 25,
-                ),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              localization.incomingEvent,
+              style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
             ),
           ),
-          ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Text('Task $index', style: AppTextTheme.label2Regular),
-              );
-            },
-            separatorBuilder: (context, index) => const SizedBox(height: 10),
-            itemCount: 3,
-          ),
-          const SizedBox(height: 10)
+          SizedBox(height: 10),
+          SizedBox(
+            height: 180,
+            child: ListView.separated(
+              shrinkWrap: true,
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return Container(
+                  width: 140,
+                  height: 280,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text('sdf'),
+                );
+              },
+              separatorBuilder: (context, index) => SizedBox(width: 12),
+              itemCount: 10,
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget _attendanceView() {
+  Widget _incompleteTaskView() {
     final localization = S.of(context);
 
-    return Expanded(
+    return RepaintBoundary(
       child: Container(
-        padding: const EdgeInsets.all(12),
-        margin: const EdgeInsets.only(right: 12, left: 6),
-        height: 230.0.h(),
+        margin: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -1308,33 +372,87 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              localization.attendanceData,
-              style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    localization.incompleteTask,
+                    style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
+                  ),
+                  SvgPicture.asset(
+                    AppImageConstant.pin,
+                    width: 25,
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            _AttendanceInfo(
-              label: localization.attendanceDate,
-              value: '15/10/2025',
+            // Using Column instead of ListView for better performance with few items
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: List.generate(
+                  3,
+                  (index) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text('Task $index', style: AppTextTheme.label2Regular),
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(height: 5),
-            _AttendanceInfo(
-              label: localization.checkInTime,
-              value: '08:59:05',
-            ),
-            const SizedBox(height: 5),
-            _AttendanceInfo(
-              label: localization.checkOutTime,
-              value: '18:00:01',
-            ),
-            const SizedBox(height: 5),
-            _AttendanceInfo(
-              label: localization.checkInLocation,
-              value: 'PK. Lê Thanh Nghị - 266 Lê Thanh Nghị',
-              maxLines: 3,
-              valueStyle: AppTextTheme.label1Bold,
-            ),
+            const SizedBox(height: 10)
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _attendanceView() {
+    final localization = S.of(context);
+
+    return Expanded(
+      child: RepaintBoundary(
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.only(right: 12, left: 6),
+          height: 230.0.h(),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: commonBoxShadow,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                localization.attendanceData,
+                style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
+              ),
+              const SizedBox(height: 10),
+              _AttendanceInfo(
+                label: localization.attendanceDate,
+                value: '15/10/2025',
+              ),
+              const SizedBox(height: 5),
+              _AttendanceInfo(
+                label: localization.checkInTime,
+                value: '08:59:05',
+              ),
+              const SizedBox(height: 5),
+              _AttendanceInfo(
+                label: localization.checkOutTime,
+                value: '18:00:01',
+              ),
+              const SizedBox(height: 5),
+              _AttendanceInfo(
+                label: localization.checkInLocation,
+                value: 'PK. Lê Thanh Nghị - 266 Lê Thanh Nghị',
+                maxLines: 3,
+                valueStyle: AppTextTheme.label1Bold,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1344,208 +462,79 @@ class _HomeScreenState extends State<HomeScreen> {
     final localization = S.of(context);
 
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        margin: const EdgeInsets.only(left: 12, right: 6),
-        height: 230.0.h(),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: commonBoxShadow,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: Text(
-                localization.leaveDay,
-                style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-              ),
-            ),
-            SizedBox(height: 20.0.h()),
-            SleekCircularSlider(
-              appearance: CircularSliderAppearance(
-                customWidths: CustomSliderWidths(progressBarWidth: 10),
-                customColors: CustomSliderColors(
-                  progressBarColors: _absenceProgressBarColors,
-                  trackColor: Colors.grey.shade400,
+      child: RepaintBoundary(
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.only(left: 12, right: 6),
+          height: 230.0.h(),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: commonBoxShadow,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  localization.leaveDay,
+                  style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
                 ),
               ),
-              onChange: null,
-              innerWidget: (double dayoff) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          text: '1.0',
-                          style: AppTextTheme.display1Bold.copyWith(
-                            color: AppColors.textSecondary,
-                            fontSize: 30,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.1,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: '/ \n12 ${localization.day}',
-                              style: AppTextTheme.caption1Bold.copyWith(color: AppColors.textSecondary),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 35.0.h()),
-                      RichText(
-                        text: TextSpan(
-                          text: localization.remain,
-                          style: AppTextTheme.label2Regular.copyWith(color: AppColors.textSecondary),
-                          children: [
-                            TextSpan(
-                              text: '11.0',
-                              style: AppTextTheme.body2Bold.copyWith(color: AppColors.absenceDayMarker),
-                            ),
-                            TextSpan(
-                              text: ' ${localization.day}',
-                              style: AppTextTheme.label2Regular.copyWith(color: AppColors.textSecondary),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                );
-              },
-              min: 1,
-              max: 12,
-              initialValue: 11,
-            ),
-          ],
+              const Expanded(
+                child: _OptimizedAbsenceCircle(
+                  usedDays: 2.0,
+                  totalDays: 12.0,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _calendarView() {
-    final color = Theme.of(context).colorScheme;
     final localization = S.of(context);
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.only(left: 12, right: 12, top: 5, bottom: 10),
-      margin: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: commonBoxShadow,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                localization.workDay,
-                style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-              ),
-              IconButton(
-                onPressed: _onChangeCalendarFormat,
-                icon: Icon(
-                  _calendarFormat == CalendarFormat.week
-                      ? Icons.arrow_drop_down_circle_rounded
-                      : Icons.arrow_drop_up_rounded,
-                  color: color.primary,
-                  size: 30,
-                ),
-              )
-            ],
-          ),
-          TableCalendar(
-            startingDayOfWeek: StartingDayOfWeek.monday,
-            firstDay: DateTime.utc(2010, 10, 16),
-            lastDay: DateTime.utc(2030, 3, 14),
-            focusedDay: DateTime.now(),
-            headerVisible: true,
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
-              formatButtonShowsNext: false,
-              titleCentered: true,
-              titleTextFormatter: (date, locale) {
-                return DateFormat('MM/yyyy').format(date);
-              },
-              titleTextStyle: AppTextTheme.body1Bold.copyWith(color: AppColors.textPrimaryLight),
-              headerPadding: const EdgeInsets.only(top: 5),
-              leftChevronMargin: EdgeInsets.zero,
-              rightChevronMargin: EdgeInsets.zero,
+    return RepaintBoundary(
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 5, bottom: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: commonBoxShadow,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _CalendarHeader(
+              title: localization.workDay,
+              calendarFormat: _calendarFormat,
+              onFormatToggle: _onChangeCalendarFormat,
             ),
-            calendarFormat: _calendarFormat,
-            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-            },
-            onFormatChanged: (format) {
-              setState(() {
-                _calendarFormat = format;
-              });
-            },
-            calendarStyle: const CalendarStyle(),
-            calendarBuilders: CalendarBuilders(
-              defaultBuilder: (context, day, focusedDay) {
-                if (day.weekday == DateTime.saturday || day.weekday == DateTime.sunday || day.isAfter(DateTime.now())) {
-                  return _CalendarMarker(
-                    bgColor: Colors.white,
-                    borderColor: Colors.grey.withValues(alpha: 0.5),
-                    day: day,
-                    textColor: AppColors.textSecondary,
-                  );
-                }
-
-                final absences = _getAbsencesForDay(day);
-                if (absences.isNotEmpty) {
-                  return _CalendarMarker(
-                    bgColor: AppColors.absenceDayMarker,
-                    day: day,
-                  );
-                }
-
-                return _CalendarMarker(
-                  bgColor: color.primary,
-                  day: day,
-                );
+            _OptimizedCalendar(
+              calendarFormat: _calendarFormat,
+              selectedDay: _selectedDay,
+              focusedDay: _focusedDay,
+              absences: _absences,
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
               },
-              selectedBuilder: (context, day, focusedDay) {
-                final absences = _getAbsencesForDay(day);
-                Color bgColor;
-                if (day.weekday == DateTime.saturday || day.weekday == DateTime.sunday) {
-                  bgColor = Colors.grey.shade300;
-                } else if (absences.isNotEmpty) {
-                  bgColor = Colors.red;
-                } else {
-                  bgColor = color.primary;
-                }
-                return _CalendarMarker(bgColor: bgColor, day: day);
-              },
-              todayBuilder: (context, day, focusedDay) {
-                final absences = _getAbsencesForDay(day);
-                Color bgColor;
-                if (day.weekday == DateTime.saturday || day.weekday == DateTime.sunday) {
-                  bgColor = Colors.grey.shade300;
-                } else if (absences.isNotEmpty) {
-                  bgColor = Colors.red.withValues(alpha: 0.7);
-                } else {
-                  bgColor = color.primary.withValues(alpha: 0.7);
-                }
-                return _CalendarMarker(bgColor: bgColor, borderColor: bgColor, day: day);
+              onFormatChanged: (format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1662,6 +651,7 @@ class _CalendarMarker extends StatelessWidget {
   final Color textColor;
 
   const _CalendarMarker({
+    super.key,
     required this.bgColor,
     this.borderColor,
     required this.day,
@@ -1754,6 +744,366 @@ class _ActionListTile extends StatelessWidget {
               colorFilter: ColorFilter.mode(AppColors.textPrimaryLight, BlendMode.srcIn),
             ),
       onTap: onTap,
+    );
+  }
+}
+
+class _CalendarHeader extends StatelessWidget {
+  final String title;
+  final CalendarFormat calendarFormat;
+  final VoidCallback onFormatToggle;
+
+  const _CalendarHeader({
+    required this.title,
+    required this.calendarFormat,
+    required this.onFormatToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
+        ),
+        IconButton(
+          onPressed: onFormatToggle,
+          icon: Icon(
+            calendarFormat == CalendarFormat.week ? Icons.arrow_drop_down_circle_rounded : Icons.arrow_drop_up_rounded,
+            color: color.primary,
+            size: 30,
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class _OptimizedAbsenceCircle extends StatelessWidget {
+  final double usedDays;
+  final double totalDays;
+
+  const _OptimizedAbsenceCircle({
+    required this.usedDays,
+    required this.totalDays,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = S.of(context);
+    final remainingDays = (totalDays - usedDays).clamp(0, totalDays);
+    final progress = (usedDays / totalDays).clamp(0.0, 1.0);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final size = constraints.biggest.shortestSide * 0.9;
+
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // --- Circle progress ---
+              SizedBox(
+                width: size,
+                height: size,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CustomPaint(
+                      size: Size(size, size),
+                      painter: _CircularProgressPainter(
+                        progress: progress,
+                        strokeWidth: 14,
+                        backgroundColor: AppColors.blue400,
+                        gradientColors: [
+                          Colors.grey.shade100,
+                          Colors.grey.shade200,
+                          Colors.grey.shade300,
+                          Colors.grey.shade400,
+                        ],
+                      ),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: '${usedDays.toStringAsFixed(1)}',
+                                style: AppTextTheme.display1Bold.copyWith(
+                                  color: AppColors.textPrimaryLight,
+                                  fontSize: 32,
+                                ),
+                              ),
+                              TextSpan(
+                                text: '\n/ ${totalDays.toInt()}',
+                                style: AppTextTheme.caption1Bold.copyWith(
+                                  color: AppColors.textSecondary.withValues(alpha: 0.7),
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          'ngày phép',
+                          style: AppTextTheme.caption2Regular.copyWith(
+                            color: AppColors.textSecondary.withValues(alpha: 0.7),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              RichText(
+                text: TextSpan(
+                  text: localization.remain,
+                  style: AppTextTheme.label2Regular.copyWith(color: AppColors.textSecondary),
+                  children: [
+                    TextSpan(
+                      text: '10.0',
+                      style: AppTextTheme.body2Bold.copyWith(color: AppColors.absenceDayMarker),
+                    ),
+                    TextSpan(
+                      text: ' ${localization.day}',
+                      style: AppTextTheme.label2Regular.copyWith(color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _CircularProgressPainter extends CustomPainter {
+  final double progress;
+  final double strokeWidth;
+  final Color backgroundColor;
+  final List<Color> gradientColors;
+
+  _CircularProgressPainter({
+    required this.progress,
+    required this.strokeWidth,
+    required this.backgroundColor,
+    required this.gradientColors,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width - strokeWidth) / 2;
+
+    final backgroundPaint = Paint()
+      ..color = backgroundColor
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawCircle(center, radius, backgroundPaint);
+
+    if (progress > 0) {
+      final rect = Rect.fromCircle(center: center, radius: radius);
+
+      final gradientPaint = Paint()
+        ..shader = SweepGradient(
+          colors: gradientColors,
+          startAngle: -90 * 3.14159 / 180,
+          endAngle: (-90 + 360 * progress) * 3.14159 / 180,
+        ).createShader(rect)
+        ..strokeWidth = strokeWidth
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round;
+
+      const startAngle = -90 * 3.14159 / 180;
+      final sweepAngle = 360 * progress * 3.14159 / 180;
+
+      canvas.drawArc(
+        rect,
+        startAngle,
+        sweepAngle,
+        false,
+        gradientPaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CircularProgressPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.backgroundColor != backgroundColor;
+  }
+
+  @override
+  bool shouldRebuildSemantics(_CircularProgressPainter oldDelegate) => false;
+}
+
+class _OptimizedCalendar extends StatefulWidget {
+  final CalendarFormat calendarFormat;
+  final DateTime? selectedDay;
+  final DateTime focusedDay;
+  final Map<DateTime, List<String>> absences;
+  final Function(DateTime, DateTime) onDaySelected;
+  final Function(CalendarFormat) onFormatChanged;
+
+  const _OptimizedCalendar({
+    required this.calendarFormat,
+    required this.selectedDay,
+    required this.focusedDay,
+    required this.absences,
+    required this.onDaySelected,
+    required this.onFormatChanged,
+  });
+
+  @override
+  State<_OptimizedCalendar> createState() => _OptimizedCalendarState();
+}
+
+class _OptimizedCalendarState extends State<_OptimizedCalendar> {
+  late final DateTime _today;
+
+  final Map<int, bool> _weekendCache = {};
+
+  final Map<String, bool> _absenceCache = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _today = DateTime.now();
+  }
+
+  bool _isWeekend(DateTime day) {
+    final key = day.weekday;
+    return _weekendCache.putIfAbsent(
+      key,
+      () => key == DateTime.saturday || key == DateTime.sunday,
+    );
+  }
+
+  bool _hasAbsence(DateTime day) {
+    final key = '${day.year}-${day.month}-${day.day}';
+    return _absenceCache.putIfAbsent(key, () {
+      final normalized = DateTime(day.year, day.month, day.day);
+      return widget.absences.containsKey(normalized) && widget.absences[normalized]!.isNotEmpty;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme;
+
+    return TableCalendar(
+      startingDayOfWeek: StartingDayOfWeek.monday,
+      firstDay: DateTime.utc(2010, 10, 16),
+      lastDay: DateTime.utc(2030, 3, 14),
+      focusedDay: widget.focusedDay,
+      headerVisible: true,
+      headerStyle: HeaderStyle(
+        formatButtonVisible: false,
+        formatButtonShowsNext: false,
+        titleCentered: true,
+        titleTextFormatter: (date, locale) {
+          return DateFormat('MM/yyyy').format(date);
+        },
+        titleTextStyle: AppTextTheme.body1Bold.copyWith(
+          color: AppColors.textPrimaryLight,
+        ),
+        headerPadding: const EdgeInsets.only(top: 5),
+        leftChevronMargin: EdgeInsets.zero,
+        rightChevronMargin: EdgeInsets.zero,
+      ),
+      calendarFormat: widget.calendarFormat,
+      selectedDayPredicate: (day) => isSameDay(widget.selectedDay, day),
+      onDaySelected: widget.onDaySelected,
+      onFormatChanged: widget.onFormatChanged,
+      calendarStyle: const CalendarStyle(),
+      calendarBuilders: CalendarBuilders(
+        defaultBuilder: (context, day, focusedDay) {
+          // Use cached checks
+          final isWeekend = _isWeekend(day);
+          final isFuture = day.isAfter(_today);
+          final hasAbsence = _hasAbsence(day);
+
+          if (isWeekend || isFuture) {
+            return _CalendarMarker(
+              key: ValueKey('default_${day.day}_${day.month}'),
+              bgColor: Colors.white,
+              borderColor: Colors.grey.withValues(alpha: 0.5),
+              day: day,
+              textColor: AppColors.textSecondary,
+            );
+          }
+
+          if (hasAbsence) {
+            return _CalendarMarker(
+              key: ValueKey('absence_${day.day}_${day.month}'),
+              bgColor: AppColors.absenceDayMarker,
+              day: day,
+            );
+          }
+
+          return _CalendarMarker(
+            key: ValueKey('work_${day.day}_${day.month}'),
+            bgColor: color.primary,
+            day: day,
+          );
+        },
+        selectedBuilder: (context, day, focusedDay) {
+          final isWeekend = _isWeekend(day);
+          final hasAbsence = _hasAbsence(day);
+
+          Color bgColor;
+          if (isWeekend) {
+            bgColor = Colors.grey.shade300;
+          } else if (hasAbsence) {
+            bgColor = Colors.red;
+          } else {
+            bgColor = color.primary;
+          }
+
+          return _CalendarMarker(
+            key: ValueKey('selected_${day.day}_${day.month}'),
+            bgColor: bgColor,
+            day: day,
+          );
+        },
+        todayBuilder: (context, day, focusedDay) {
+          final isWeekend = _isWeekend(day);
+          final hasAbsence = _hasAbsence(day);
+
+          Color bgColor;
+          if (isWeekend) {
+            bgColor = Colors.grey.shade300;
+          } else if (hasAbsence) {
+            bgColor = Colors.red.withValues(alpha: 0.7);
+          } else {
+            bgColor = color.primary.withValues(alpha: 0.7);
+          }
+
+          return _CalendarMarker(
+            key: ValueKey('today_${day.day}'),
+            bgColor: bgColor,
+            borderColor: bgColor,
+            day: day,
+          );
+        },
+      ),
     );
   }
 }
