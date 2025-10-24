@@ -32,11 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
     DateTime(2025, 10, 20): ['Bob Williams', 'Carol Martinez'],
   };
 
-  late List<Map<String, dynamic>> _companyItems;
-  late List<Map<String, dynamic>> _helpDeskItems;
-  late List<Map<String, dynamic>> _recruimentItems;
-  bool _itemsInitialized = false;
-
   bool _hasScrolled = false;
 
   @override
@@ -48,83 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_itemsInitialized) {
-      _initializeItems();
-      _itemsInitialized = true;
-    }
-  }
-
-  void _initializeItems() {
-    final localization = S.of(context);
-
-    _companyItems = [
-      {
-        'icon': AppImageConstant.homeCompanyNews,
-        'label': localization.companyNews,
-        'path': '/news',
-      },
-      {
-        'icon': AppImageConstant.homeCompanyOrganize,
-        'label': localization.organization,
-        'path': '/organize',
-      },
-      {
-        'icon': AppImageConstant.homeCompanySurvey,
-        'label': localization.survey,
-        'path': '/survey',
-      },
-      {
-        'icon': AppImageConstant.homeCompanyAward,
-        'label': localization.award,
-        'path': '/award',
-      },
-      {
-        'icon': AppImageConstant.homeCompanyEvent,
-        'label': localization.event,
-        'path': '/event',
-      },
-    ];
-
-    _helpDeskItems = [
-      {
-        'icon': AppImageConstant.homeHelpIT,
-        'label': localization.ticketIT,
-        'path': '/ticket_it',
-      },
-      {
-        'icon': AppImageConstant.homeHelpRequest,
-        'label': localization.createRequest,
-        'path': '/create_request',
-      },
-      {
-        'icon': AppImageConstant.homeHelpDevice,
-        'label': localization.requestDevice,
-        'path': '/request_device',
-      },
-    ];
-
-    _recruimentItems = [
-      {
-        'icon': AppImageConstant.homeRecReferral,
-        'label': localization.referral,
-        'path': '/referral',
-      },
-      {
-        'icon': AppImageConstant.homeRecInterview,
-        'label': localization.interviewCalendar,
-        'path': '/interview_calendar',
-      },
-      {
-        'icon': AppImageConstant.homeRecCheckList,
-        'label': localization.onboardChecklist,
-        'path': '/onboard_checklist',
-      },
-      {
-        'icon': AppImageConstant.homeRecRecall,
-        'label': localization.offboarding,
-        'path': '/offboarding',
-      },
-    ];
   }
 
   @override
@@ -196,10 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_itemsInitialized) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     final localization = S.of(context);
 
     return Stack(
@@ -229,313 +143,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 15.0)),
-            SliverToBoxAdapter(child: _incompleteTaskView()),
-            const SliverToBoxAdapter(child: SizedBox(height: 15.0)),
-            _functionListTitle(localization.aboutCompany),
-            _buildFunctionGrid(_companyItems),
-            // _functionListTitle('Helpdesk'),
-            // _buildFunctionGrid(_helpDeskItems),
-            // _functionListTitle('Nhân sự'),
-            // _buildFunctionGrid(_recruimentItems),
-            // SliverToBoxAdapter(child: _incomingEventView()),
+            SliverToBoxAdapter(child: _taskProgressView()),
+            _workNoteView(localization),
+            _incomingEventView(localization),
             const SliverToBoxAdapter(child: SizedBox(height: 25.0)),
           ],
         ),
         _quickActionButton(),
       ],
-    );
-  }
-
-  Widget _buildFunctionGrid(List<Map<String, dynamic>> items) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-      sliver: DecoratedSliver(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: commonBoxShadow,
-        ),
-        sliver: SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            mainAxisSpacing: 0,
-            childAspectRatio: 1,
-          ),
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final item = items[index];
-              return _GridItem(
-                key: ValueKey('${item['path']}_$index'),
-                icon: item['icon'],
-                label: item['label'],
-                path: item['path'],
-              );
-            },
-            childCount: items.length,
-          ),
-        ),
-      ),
-    );
-  }
-
-  SliverToBoxAdapter _functionListTitle(String title) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 3.0, top: 10),
-        child: Text(
-          title,
-          style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-        ),
-      ),
-    );
-  }
-
-  Widget _quickActionButton() {
-    final color = Theme.of(context).colorScheme;
-
-    return Positioned(
-      bottom: 10,
-      right: 10,
-      child: IconButton(
-        splashRadius: 30,
-        style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(color.primaryContainer),
-          shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0.r()),
-          )),
-          elevation: const WidgetStatePropertyAll<double>(3),
-          shadowColor: const WidgetStatePropertyAll<Color>(Colors.grey),
-        ),
-        onPressed: _addingActionList,
-        icon: Icon(
-          Icons.add,
-          color: color.primary,
-          size: 28.0.h(),
-        ),
-      ),
-    );
-  }
-
-  Widget _incomingEventView() {
-    final localization = S.of(context);
-
-    return RepaintBoundary(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(
-              localization.incomingEvent,
-              style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-            ),
-          ),
-          SizedBox(height: 10),
-          SizedBox(
-            height: 180,
-            child: ListView.separated(
-              shrinkWrap: true,
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return Container(
-                  width: 140,
-                  height: 280,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text('sdf'),
-                );
-              },
-              separatorBuilder: (context, index) => SizedBox(width: 12),
-              itemCount: 10,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _incompleteTaskView() {
-    final localization = S.of(context);
-
-    return RepaintBoundary(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: commonBoxShadow,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    localization.incompleteTask,
-                    style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-                  ),
-                  SvgPicture.asset(
-                    AppImageConstant.pin,
-                    width: 25,
-                  ),
-                ],
-              ),
-            ),
-            // Using Column instead of ListView for better performance with few items
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: List.generate(
-                  3,
-                  (index) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text('Task $index', style: AppTextTheme.label2Regular),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10)
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _attendanceView() {
-    final localization = S.of(context);
-
-    return Expanded(
-      child: RepaintBoundary(
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          margin: const EdgeInsets.only(right: 12, left: 6),
-          height: 230.0.h(),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: commonBoxShadow,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                localization.attendanceData,
-                style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-              ),
-              const SizedBox(height: 10),
-              _AttendanceInfo(
-                label: localization.attendanceDate,
-                value: '15/10/2025',
-              ),
-              const SizedBox(height: 5),
-              _AttendanceInfo(
-                label: localization.checkInTime,
-                value: '08:59:05',
-              ),
-              const SizedBox(height: 5),
-              _AttendanceInfo(
-                label: localization.checkOutTime,
-                value: '18:00:01',
-              ),
-              const SizedBox(height: 5),
-              _AttendanceInfo(
-                label: localization.checkInLocation,
-                value: 'PK. Lê Thanh Nghị - 266 Lê Thanh Nghị',
-                maxLines: 3,
-                valueStyle: AppTextTheme.label1Bold,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _absenceView() {
-    final localization = S.of(context);
-
-    return Expanded(
-      child: RepaintBoundary(
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          margin: const EdgeInsets.only(left: 12, right: 6),
-          height: 230.0.h(),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: commonBoxShadow,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: Text(
-                  localization.leaveDay,
-                  style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
-                ),
-              ),
-              const Expanded(
-                child: _OptimizedAbsenceCircle(
-                  usedDays: 2.0,
-                  totalDays: 12.0,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _calendarView() {
-    final localization = S.of(context);
-
-    return RepaintBoundary(
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.only(left: 12, right: 12, top: 5, bottom: 10),
-        margin: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: commonBoxShadow,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _CalendarHeader(
-              title: localization.workDay,
-              calendarFormat: _calendarFormat,
-              onFormatToggle: _onChangeCalendarFormat,
-            ),
-            _OptimizedCalendar(
-              calendarFormat: _calendarFormat,
-              selectedDay: _selectedDay,
-              focusedDay: _focusedDay,
-              absences: _absences,
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              },
-              onFormatChanged: (format) {
-                setState(() {
-                  _calendarFormat = format;
-                });
-              },
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -594,50 +209,419 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
 
-// Extract stateless widgets for better performance
-class _GridItem extends StatelessWidget {
-  final String icon;
-  final String label;
-  final String path;
+  Widget _calendarView() {
+    final localization = S.of(context);
 
-  const _GridItem({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.path,
-  });
+    return RepaintBoundary(
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.only(left: 12, right: 12, top: 5, bottom: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: commonBoxShadow,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _CalendarHeader(
+              title: localization.workDay,
+              calendarFormat: _calendarFormat,
+              onFormatToggle: _onChangeCalendarFormat,
+            ),
+            _OptimizedCalendar(
+              calendarFormat: _calendarFormat,
+              selectedDay: _selectedDay,
+              focusedDay: _focusedDay,
+              absences: _absences,
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+              },
+              onFormatChanged: (format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(5.0),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(15),
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: InkWell(
-          onTap: () {
-            // context.goNamed(path);
-          },
+  Widget _absenceView() {
+    final localization = S.of(context);
+
+    return Expanded(
+      child: RepaintBoundary(
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.only(left: 12, right: 6),
+          height: 230.0.h(),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: commonBoxShadow,
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                icon,
-                width: 32.0.w(),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  localization.leaveDay,
+                  style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
+                ),
               ),
-              SizedBox(height: 7.0.h()),
-              Text(
-                label,
-                style: AppTextTheme.caption2Bold,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
+              const Expanded(
+                child: _OptimizedAbsenceCircle(
+                  usedDays: 2.0,
+                  totalDays: 12.0,
+                ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _attendanceView() {
+    final localization = S.of(context);
+
+    return Expanded(
+      child: RepaintBoundary(
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.only(right: 12, left: 6),
+          height: 230.0.h(),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: commonBoxShadow,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                localization.attendanceData,
+                style: AppTextTheme.body2Bold.copyWith(color: AppColors.textPrimaryLight),
+              ),
+              const SizedBox(height: 10),
+              _AttendanceInfo(
+                label: localization.attendanceDate,
+                value: '15/10/2025',
+              ),
+              const SizedBox(height: 5),
+              _AttendanceInfo(
+                label: localization.checkInTime,
+                value: '08:59:05',
+              ),
+              const SizedBox(height: 5),
+              _AttendanceInfo(
+                label: localization.checkOutTime,
+                value: '18:00:01',
+              ),
+              const SizedBox(height: 5),
+              _AttendanceInfo(
+                label: localization.checkInLocation,
+                value: 'PK. Lê Thanh Nghị - 266 Lê Thanh Nghị',
+                maxLines: 3,
+                valueStyle: AppTextTheme.label1Bold,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _taskProgressView() {
+    final localization = S.of(context);
+
+    return RepaintBoundary(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: commonBoxShadow,
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    localization.taskProgress,
+                    style: AppTextTheme.body1Bold.copyWith(color: AppColors.textPrimaryLight),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.pending_actions_rounded, color: Colors.orange, size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          '3 ${localization.task}',
+                          style: AppTextTheme.caption2Regular.copyWith(
+                            color: Colors.orange.shade800,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+
+              // --- Task list ---
+              Column(
+                children: List.generate(
+                  3,
+                  (index) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: Colors.grey.shade200,
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.radio_button_unchecked_rounded,
+                            color: AppColors.blue400,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Task ${index + 1}: Hoàn thành báo cáo tuần',
+                              style: AppTextTheme.label2Regular.copyWith(
+                                color: AppColors.textSecondary,
+                                height: 1.3,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: Colors.grey.shade400,
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Center(
+                child: TextButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.list_alt_rounded, size: 18, color: AppColors.blue500),
+                  label: Text(
+                    localization.viewAll,
+                    style: AppTextTheme.label2Bold.copyWith(
+                      color: AppColors.blue500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _workNoteView(S localization) {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: commonBoxShadow,
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    localization.note,
+                    style: AppTextTheme.body1Bold.copyWith(color: AppColors.textPrimaryLight),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.blue50,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '0 ${localization.noteNormalize}',
+                      style: AppTextTheme.caption2Regular.copyWith(
+                        color: AppColors.blue700,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15.0.h()),
+              Container(
+                width: double.infinity,
+                height: 155,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.grey.shade200,
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 10.0.h()),
+                    Icon(
+                      Icons.sticky_note_2_outlined,
+                      color: AppColors.blue400.withValues(alpha: 0.8),
+                      size: 42,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      localization.noteEmpty,
+                      style: AppTextTheme.label1Regular.copyWith(
+                        color: AppColors.textSecondary.withValues(alpha: 0.8),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: TextButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.edit_note, size: 18, color: AppColors.blue500),
+                        label: Text(
+                          localization.noteCreation,
+                          style: AppTextTheme.label2Bold.copyWith(color: AppColors.blue500),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _incomingEventView(S localization) {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: commonBoxShadow,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              localization.incomingEvent,
+              style: AppTextTheme.body1Bold.copyWith(color: AppColors.textPrimaryLight),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(height: 10),
+            _eventCard('Khám sức khỏe định kỳ', '28/10/2025'),
+            SizedBox(height: 10),
+            _eventCard('Du lịch nghỉ mát', '25/12/2025'),
+            SizedBox(height: 10),
+            _eventCard('Nghỉ tết dương lịch', '31/12/2025'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _eventCard(String eventTitle, String eventDate) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.event, color: Colors.green),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '$eventTitle - $eventDate',
+              style: AppTextTheme.caption2Regular.copyWith(
+                color: AppColors.textPrimaryLight,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _quickActionButton() {
+    final color = Theme.of(context).colorScheme;
+
+    return Positioned(
+      bottom: 10,
+      right: 10,
+      child: IconButton(
+        splashRadius: 30,
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(color.primaryContainer),
+          shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0.r()),
+          )),
+          elevation: const WidgetStatePropertyAll<double>(3),
+          shadowColor: const WidgetStatePropertyAll<Color>(Colors.grey),
+        ),
+        onPressed: _addingActionList,
+        icon: Icon(
+          Icons.add,
+          color: color.primary,
+          size: 28.0.h(),
         ),
       ),
     );

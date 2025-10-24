@@ -29,4 +29,5 @@ class AppImageConstant {
   static const String homeRecRecall = 'assets/icon/home_rec_recall.svg';
   static const String homeRecReferral = 'assets/icon/home_rec_referral.svg';
   static const String incoming = 'assets/icon/incoming.svg';
+  static const String addNote = 'assets/icon/add_note.svg';
 }
