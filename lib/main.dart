@@ -12,9 +12,9 @@ import 'feature/module_location/presentation/presentation/location_bloc.dart';
 import 'generated/l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  dependencyInitialize();
+  await dependencyInitialize();
   runApp(const MyApp());
 }
 
